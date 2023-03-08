@@ -15,15 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/v1")
 public class ApiRestController {
-    
-    @GetMapping(value = "/health")
-	public ResponseEntity<?> health() {
-		log.info("Health");
-
-		return ResponseEntity.ok("Ok");
-	}
 
     @GetMapping(value = "/candidates")
 	public ResponseEntity<?> fetchCandidates(@RequestParam(value = "skill", required = false) String skill) {

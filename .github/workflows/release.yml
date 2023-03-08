@@ -18,8 +18,8 @@ env:
   
   SERVICE_NAME: api-candidates-gradle
   SERVICE_PORT: 8000
-  SERVICE_BASE_PATH: /api/v1
-  SERVICE_HEALTH_PATH: /api/v1
+  SERVICE_BASE_PATH: /v1
+  SERVICE_HEALTH_PATH: /actuator/health
   
   AWS_ALB_NUMBER: 1
   AWS_ALB_PRIORITY: 4
