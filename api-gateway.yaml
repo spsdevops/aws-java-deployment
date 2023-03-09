@@ -14,7 +14,10 @@ Parameters:
     Type: String 
     Description: Nombre del stage del API Gateway
     Default: "api"
-    
+  Consultora:
+    Type: String
+    Description: Nombre de la consultora   
+
 ##############################
 # Definición de API Gateway  #
 ##############################
@@ -23,7 +26,10 @@ Resources:
       Type: 'AWS::ApiGateway::RestApi'
       Properties:
         Name: !Ref ServiceName
-
+        Tags: 
+          - Key: cluster_ECS
+            Value: !Ref Consultora
+      
     Resource:
       Type: 'AWS::ApiGateway::Resource'
       Properties:
@@ -70,6 +76,10 @@ Resources:
         Description: !Sub "${ServiceName} API Key"
         Enabled: true
         GenerateDistinctId: false
+        Tags: 
+        - Key: cluster_ECS
+          Value: !Ref Consultora
+
     ApiUsagePlan:
       DependsOn:
        - Deployment
@@ -80,9 +90,27 @@ Resources:
           Stage: !Ref StageName    
         Description: !Sub "${ServiceName} Usage Plan"
         UsagePlanName: !Sub "${ServiceName}-usage-plan"
+        Tags: 
+        - Key: cluster_ECS
+          Value: !Ref Consultora
+
     ApiUsagePlanKey:
       Type: "AWS::ApiGateway::UsagePlanKey"
       Properties:
         KeyId: !Ref ApiKey
         KeyType: API_KEY
         UsagePlanId: !Ref ApiUsagePlan
+
+
+Outputs:
+  ApiKey:
+    Description: API Key ID
+    Value: !Ref ApiKey
+    Export:
+      Name: !Sub ${ServiceName}-ApiKey
+
+  Api:
+    Description: API ID
+    Value: !Ref Api
+    Export:
+      Name: !Sub ${ServiceName}-ApiId
