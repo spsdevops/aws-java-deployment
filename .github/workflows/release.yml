@@ -14,7 +14,7 @@ on:
 
 env:
   
-  CONSULTORA: hello-world
+  AWS_ECS_CLUSTER: hello-world
   
   SERVICE_NAME: api-candidates-gradle
   SERVICE_PORT: 8000
@@ -154,9 +154,9 @@ jobs:
         --no-confirm-changeset \
         --s3-bucket sam-bucket-paketo \
         --s3-prefix ${{ env.SERVICE_NAME }}-service \
-        --tags "commit_hash=${{ github.sha }} cluster_ECS=${{ env.CONSULTORA }} repo=${{ github.repository }}" \
+        --tags "commit_hash=${{ github.sha }} cluster_ECS=${{ env.AWS_ECS_CLUSTER }} repo=${{ github.repository }}" \
         --parameter-overrides="ServiceName=${{ env.SERVICE_NAME }} TaskDefinitionARN=${{ steps.deploy-task-definition.outputs.task-definition-arn }} \
-        HealthPath=${{ env.SERVICE_HEALTH_PATH }} APIBasePath=${{ env.SERVICE_BASE_PATH}} Consultora=${{ env.CONSULTORA }} ContainerPort=${{ env.SERVICE_PORT }} \
+        HealthPath=${{ env.SERVICE_HEALTH_PATH }} APIBasePath=${{ env.SERVICE_BASE_PATH}} Consultora=${{ env.AWS_ECS_CLUSTER }} ContainerPort=${{ env.SERVICE_PORT }} \
         PrioridadListener=${{ env.AWS_ALB_PRIORITY }} NombreVPC=${{ env.AWS_VPC_NAME }}"
     
     - name: Crear/Actualizar API Gateway
@@ -169,9 +169,9 @@ jobs:
         --no-confirm-changeset \
         --s3-bucket sam-bucket-paketo \
         --s3-prefix ${{ env.SERVICE_NAME }}-api \
-        --tags "commit_hash=${{ github.sha }} cluster_ECS=${{ env.CONSULTORA }} repo=${{ github.repository }}" \
+        --tags "commit_hash=${{ github.sha }} cluster_ECS=${{ env.AWS_ECS_CLUSTER }} repo=${{ github.repository }}" \
         --parameter-overrides="ServiceName=${{ env.SERVICE_NAME }} TaskDefinitionARN=${{ steps.deploy-task-definition.outputs.task-definition-arn }} \
-        APIBasePath=${{ env.SERVICE_BASE_PATH}} NombreVPC=${{ env.AWS_VPC_NAME }} Consultora=${{ env.CONSULTORA }}"
+        APIBasePath=${{ env.SERVICE_BASE_PATH}} NombreVPC=${{ env.AWS_VPC_NAME }} Consultora=${{ env.AWS_ECS_CLUSTER }}"
 
     - name: Agregar valores de API Gateway a SSM
       run: |
@@ -197,5 +197,5 @@ jobs:
 
                   
         echo "Se agrega API Key y endpoint en SSM"
-        aws ssm put-parameter --name /${{ env.CONSULTORA }}/${{ env.SERVICE_NAME }}-api --value \
+        aws ssm put-parameter --name /${{ env.AWS_ECS_CLUSTER }}/${{ env.SERVICE_NAME }}-api --value \
         "$SSM_CONTENT" --overwrite --type String --region ${{ env.AWS_DEPLOY_REGION }}
