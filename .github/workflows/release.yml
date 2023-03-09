@@ -171,4 +171,31 @@ jobs:
         --s3-prefix ${{ env.SERVICE_NAME }}-api \
         --tags "commit_hash=${{ github.sha }} cluster_ECS=${{ env.CONSULTORA }} repo=${{ github.repository }}" \
         --parameter-overrides="ServiceName=${{ env.SERVICE_NAME }} TaskDefinitionARN=${{ steps.deploy-task-definition.outputs.task-definition-arn }} \
-        APIBasePath=${{ env.SERVICE_BASE_PATH}} NombreVPC=${{ env.AWS_VPC_NAME }}"
+        APIBasePath=${{ env.SERVICE_BASE_PATH}} NombreVPC=${{ env.AWS_VPC_NAME }} Consultora=${{ env.CONSULTORA }}"
+
+    - name: Agregar valores de API Gateway a SSM
+      run: |
+        echo "Se obtiene APIKEY ID de los exports del stack"
+        APIKEY_ID=$(aws cloudformation --region ${{ env.AWS_DEPLOY_REGION }} describe-stacks --stack-name ${{ env.SERVICE_NAME }}-api \
+        --query 'Stacks[0].Outputs[?OutputKey==`ApiKey`].OutputValue' --output text)
+
+        echo "Se obtiene el API ID de los exports del stack"
+        API_ID=$(aws cloudformation --region ${{ env.AWS_DEPLOY_REGION }} describe-stacks --stack-name ${{ env.SERVICE_NAME }}-api \
+        --query 'Stacks[0].Outputs[?OutputKey==`Api`].OutputValue' --output text)
+
+        echo "Se obtiene el valor de la API Key"
+        APIKEY_QUOTES=$(aws apigateway get-api-key --api-key $APIKEY_ID --include-value --region ${{ env.AWS_DEPLOY_REGION }} --query 'value')
+        
+        temp="${APIKEY_QUOTES%\"}"
+        APIKEY="${temp#\"}"
+        ENDPOINT="https://$API_ID.execute-api.${{ env.AWS_DEPLOY_REGION }}.amazonaws.com/api"
+
+        SSM_CONTENT=$( jq -n \
+                          --arg ep "$ENDPOINT" \
+                          --arg ak "$APIKEY" \
+                          '{ENDPOINT: $ep, APIKEY: $ak}' )
+
+                  
+        echo "Se agrega API Key y endpoint en SSM"
+        aws ssm put-parameter --name /${{ env.CONSULTORA }}/${{ env.SERVICE_NAME }}-api --value \
+        "$SSM_CONTENT" --overwrite --type String --region ${{ env.AWS_DEPLOY_REGION }}
