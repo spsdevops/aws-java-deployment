@@ -14,7 +14,7 @@ Parameters:
     Type: String 
     Description: Nombre del stage del API Gateway
     Default: "api"
-  Consultora:
+  ClusterName:
     Type: String
     Description: Nombre de la consultora   
 
@@ -28,7 +28,7 @@ Resources:
         Name: !Ref ServiceName
         Tags: 
           - Key: cluster_ECS
-            Value: !Ref Consultora
+            Value: !Ref ClusterName
       
     Resource:
       Type: 'AWS::ApiGateway::Resource'
@@ -78,7 +78,7 @@ Resources:
         GenerateDistinctId: false
         Tags: 
         - Key: cluster_ECS
-          Value: !Ref Consultora
+          Value: !Ref ClusterName
 
     ApiUsagePlan:
       DependsOn:
@@ -92,7 +92,7 @@ Resources:
         UsagePlanName: !Sub "${ServiceName}-usage-plan"
         Tags: 
         - Key: cluster_ECS
-          Value: !Ref Consultora
+          Value: !Ref ClusterName
 
     ApiUsagePlanKey:
       Type: "AWS::ApiGateway::UsagePlanKey"

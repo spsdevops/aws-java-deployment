@@ -7,7 +7,7 @@ Parameters:
   ApiAlbNumber:
     Type: String
     Default: "1"
-  Consultora:
+  ClusterName:
     Type: String
     Description: Nombre de la consultora
   ServiceName:
@@ -106,7 +106,7 @@ Resources:
           - ALBListenerProdRule
         Properties:
             ServiceName: !Ref ServiceName
-            Cluster: !Ref Consultora
+            Cluster: !Ref ClusterName
             LoadBalancers: 
               - 
                 TargetGroupArn: !Ref ElasticLoadBalancingV2TargetGroup
@@ -152,5 +152,5 @@ Resources:
     TaskLogGroup:
       Type: 'AWS::Logs::LogGroup'
       Properties:
-        LogGroupName: !Sub '/ecs/${ServiceName}'
+        LogGroupName: !Sub '/ecs/${ClusterName}/${ServiceName}'
         RetentionInDays: 30
