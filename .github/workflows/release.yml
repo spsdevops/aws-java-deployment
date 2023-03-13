@@ -19,7 +19,7 @@ env:
   SERVICE_BASE_PATH: /v1
   SERVICE_HEALTH_PATH: /actuator/health
   
-  AWS_ECS_CLUSTER: test
+  AWS_ECS_CLUSTER: sps
   AWS_ALB_NUMBER: 1
   AWS_ALB_PRIORITY: 4
   AWS_VPC_NAME: NMP-Servicios
