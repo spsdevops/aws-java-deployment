@@ -50,7 +50,7 @@ jobs:
 
     - uses: actions/setup-java@v3
       with:
-        distribution: temurin
+        distribution: liberica
         java-version: 11
         
     - name: Setup Gradle
@@ -59,8 +59,7 @@ jobs:
     - name: Execute Gradle build
       run: |
         chmod +x gradlew
-        sudo ./gradlew build
-        ls
+        sudo ./gradlew sonar -D "sonar.projectKey=${{env.SONAR_PROJECT_KEY}}" -D "sonar.host.url=${{ secrets.SONARQUBE_HOST }}" -D "sonar.login=${{ secrets.SONARQUBE_TOKEN }}"
 
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
