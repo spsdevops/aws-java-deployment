@@ -91,7 +91,7 @@ jobs:
     - name: build image
       run: |
         pack build ${{ secrets.DOCKER_HUB_USER }}/${{ env.SERVICE_NAME }}:${{ github.sha }} \
-        --builder ${{ env.BUILDPACK_BUILDER }} --path . --buildpack ${{ env.BUILDPACK_LANGUAGE }} \
+        --builder ${{ env.BUILDPACK_BUILDER }} --path . --buildpack ${{ env.BUILDPACK_LANGUAGE }} --buildpack paketo-buildpacks/eclipse-openj9 \
         --env-file ${{ env.BUILDPACK_ENV_FILE }}
 
     - name: Push Image
