@@ -59,8 +59,8 @@ jobs:
     - name: Execute Gradle build
       run: |
         chmod +x gradlew
-        sudo ./gradlew sonar -D "sonar.projectKey=${{env.SONAR_PROJECT_KEY}}" -D "sonar.host.url=${{ secrets.SONARQUBE_HOST }}" -D "sonar.login=${{ secrets.SONARQUBE_TOKEN }}"
-
+        sudo ./gradlew sonar -D "sonar.projectKey=${{env.SONAR_PROJECT_KEY}}" -D "sonar.host.url=${{ secrets.SONARQUBE_HOST }}" -D "sonar.login=${{ secrets.SONARQUBE_TOKEN }}" -D "sonar.projectName=${{env.SONAR_PROJECT_KEY}}"
+    
     - name: SonarQube Scan
       uses: sonarsource/sonarqube-scan-action@master
       env:
