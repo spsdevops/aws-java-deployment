@@ -139,7 +139,7 @@ Resources:
     APIMappings:
       Type: 'AWS::ApiGateway::BasePathMapping'
       Properties:
-        DomainName: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
+        DomainName: !Sub "test3.${SubdominioBalanceador}.${DominioBase}"
         RestApiId: !Ref Api
         BasePath: !Ref APIBasePath
         Stage: !Ref StageName
