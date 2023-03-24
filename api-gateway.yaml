@@ -130,7 +130,7 @@ Resources:
       Properties:
         CertificateArn: 
           Fn::ImportValue: !Sub "${SubdominioBalanceador}-${Route53HostedZoneId}-CertificateArn"
-        DomainName: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
+        DomainName: !Sub "test3.${SubdominioBalanceador}.${DominioBase}"
         EndpointConfiguration:
           Types:
             - !Ref TypeEndpoint
