@@ -111,7 +111,7 @@ Resources:
       Properties:
         ApiStages: 
         - ApiId: !Ref Api
-          Stage: !Ref StageName    
+          Stage: !Ref StageName
         Description: !Sub "${ServiceName} Usage Plan"
         UsagePlanName: !Sub "${ServiceName}-usage-plan"
         Tags: 
@@ -126,32 +126,30 @@ Resources:
         UsagePlanId: !Ref ApiUsagePlan
     
     CustomDomain:
-      Type: AWS::ApiGateway::DomainName
+      Type: 'AWS::ApiGateway::DomainName'
       Properties:
-      CertificateArn: 
-        Fn::ImportValue: !Sub "${SubdominioBalanceador}-${Route53HostedZoneId}-CertificateArn"
-      DomainName: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
-      EndpointConfiguration:
-        Types:
-          - !Ref TypeEndpoint
-      RegionalCertificateArn:
-        Fn::ImportValue: !Sub "${SubdominioBalanceador}-${Route53HostedZoneId}-CertificateArn"
-      SecurityPolicy: !Ref TLSVersion
+        CertificateArn: 
+          Fn::ImportValue: !Sub "${SubdominioBalanceador}-${Route53HostedZoneId}-CertificateArn"
+        DomainName: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
+        EndpointConfiguration:
+          Types:
+            - !Ref TypeEndpoint
+        SecurityPolicy: !Ref TLSVersion
     
     APIMappings:
-      Type: 'AWS::ApiGatewayV2::ApiMapping'
+      Type: 'AWS::ApiGateway::BasePathMapping'
       Properties:
         DomainName: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
-        ApiId: !Ref Api
-        Stage: !Ref StageName
+        RestApiId: !Ref Api
         BasePath: !Ref APIBasePath
+        Stage: !Ref StageName
 
     DomainRecordSet:
-      Type: AWS::Route53::RecordSetGroup
+      Type: 'AWS::Route53::RecordSetGroup'
       Properties:
         HostedZoneId: !Ref Route53HostedZoneId
         RecordSets:
-            Name: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
+          - Name: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
             Type: A
             AliasTarget:
               DNSName: !GetAtt CustomDomain.RegionalDomainName
