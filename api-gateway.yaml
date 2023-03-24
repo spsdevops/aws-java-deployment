@@ -128,7 +128,7 @@ Resources:
     CustomDomain:
       Type: 'AWS::ApiGateway::DomainName'
       Properties:
-        CertificateArn: 
+        RegionalCertificateArn: 
           Fn::ImportValue: !Sub "${SubdominioBalanceador}-${Route53HostedZoneId}-CertificateArn"
         DomainName: !Sub "test3.${SubdominioBalanceador}.${DominioBase}"
         EndpointConfiguration:
