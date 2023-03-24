@@ -17,10 +17,10 @@ Parameters:
   ClusterName:
     Type: String
     Description: Nombre de la consultora
-  APIBasePath:
-    Type: String 
-    Description: Basepath en API Gateway
-    Default: ""
+  # APIBasePath:
+  #   Type: String 
+  #   Description: Basepath en API Gateway
+  #   Default: ""
   DominioBase:
     Type: String
     Default: test.timelineage.site
@@ -141,7 +141,7 @@ Resources:
       Properties:
         DomainName: !Sub "test3.${SubdominioBalanceador}.${DominioBase}"
         RestApiId: !Ref Api
-        BasePath: !Ref APIBasePath
+        # BasePath: !Ref APIBasePath
         Stage: !Ref StageName
 
     DomainRecordSet:
