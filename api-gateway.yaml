@@ -149,7 +149,7 @@ Resources:
       Properties:
         HostedZoneId: !Ref Route53HostedZoneId
         RecordSets:
-          - Name: !Sub "trial3.${SubdominioBalanceador}.${DominioBase}"
+          - Name: !Sub "test3.${SubdominioBalanceador}.${DominioBase}"
             Type: A
             AliasTarget:
               DNSName: !GetAtt CustomDomain.RegionalDomainName
