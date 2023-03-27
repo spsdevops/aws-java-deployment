@@ -36,7 +36,7 @@ Parameters:
   TLSVersion:
     Type: String
     Default: TLS_1_2
-    Description: "Version TLS. Ejemplo: TLS 1.0 y TLS 1.2"
+    Description: "Version TLS. Ejemplo: TLS 1.2 y TLS 1.0"
   TypeEndpoint:
     Type: String
     Default: REGIONAL
