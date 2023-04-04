@@ -187,12 +187,12 @@ jobs:
       run: |
         sam deploy \
         -t service-components.yaml \
-        --stack-name ${{ env.SERVICE_NAME }}-service \
+        --stack-name service-${{ env.SERVICE_NAME }} \
         --no-fail-on-empty-changeset  \
         --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
         --no-confirm-changeset \
         --s3-bucket sam-bucket-${{secrets.DEV_AWS_ACCOUNT_ID}} \
-        --s3-prefix ${{ env.SERVICE_NAME }}-service \
+        --s3-prefix service-${{ env.SERVICE_NAME }} \
         --tags "commit_hash=${{ github.sha }} ClusterECS=${{ env.AWS_ECS_CLUSTER }} repo=${{ github.repository }}" \
         --parameter-overrides="ServiceName=${{ env.SERVICE_NAME }} TaskDefinitionARN=${{ steps.deploy-task-definition.outputs.task-definition-arn }} \
         HealthPath=${{ env.SERVICE_HEALTH_PATH }} APIBasePath=${{ env.SERVICE_BASE_PATH}} ClusterName=${{ env.AWS_ECS_CLUSTER }} ContainerPort=${{ env.SERVICE_PORT }} \
@@ -205,12 +205,12 @@ jobs:
       run: |
         sam deploy \
         -t service-components.yaml \
-        --stack-name ${{ env.SERVICE_NAME }}-service \
+        --stack-name service-${{ env.SERVICE_NAME }} \
         --no-fail-on-empty-changeset  \
         --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
         --no-confirm-changeset \
         --s3-bucket sam-bucket-${{secrets.DEV_AWS_ACCOUNT_ID}} \
-        --s3-prefix ${{ env.SERVICE_NAME }}-service \
+        --s3-prefix service-${{ env.SERVICE_NAME }} \
         --tags "commit_hash=${{ github.sha }} ClusterECS=${{ env.AWS_ECS_CLUSTER }} repo=${{ github.repository }}" \
         --parameter-overrides="ServiceName=${{ env.SERVICE_NAME }} TaskDefinitionARN=${{ steps.deploy-task-definition.outputs.task-definition-arn }} \
         HealthPath=${{ env.SERVICE_HEALTH_PATH }} APIBasePath=${{ env.SERVICE_BASE_PATH}} ClusterName=${{ env.AWS_ECS_CLUSTER }} ContainerPort=${{ env.SERVICE_PORT }} \
@@ -221,21 +221,29 @@ jobs:
       run: |
         sam deploy \
         -t api-gateway.yaml \
-        --stack-name ${{ env.SERVICE_NAME }}-api \
+        --stack-name api-${{ env.SERVICE_NAME }} \
         --no-fail-on-empty-changeset  \
         --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
         --no-confirm-changeset \
         --s3-bucket sam-bucket-${{secrets.DEV_AWS_ACCOUNT_ID}} \
-        --s3-prefix ${{ env.SERVICE_NAME }}-api \
+        --s3-prefix api-${{ env.SERVICE_NAME }} \
         --tags "commit_hash=${{ github.sha }} ClusterECS=${{ env.AWS_ECS_CLUSTER }} repo=${{ github.repository }}" \
         --parameter-overrides="ServiceName=${{ env.SERVICE_NAME }} TaskDefinitionARN=${{ steps.deploy-task-definition.outputs.task-definition-arn }} \
         APIBasePath=${{ env.SERVICE_BASE_PATH}} NombreVPC=${{ env.AWS_VPC_NAME }} ClusterName=${{ env.AWS_ECS_CLUSTER }}"
+
+    - name: URL del servicio
+      run: |
+        echo "Puedes consultar tu servicio en la siguiente URL "https://${{ env.SERVICE_NAME }}.${{env.AWS_R53_SUB_DOMAIN}}${{env.AWS_ALB_NUMBER}}.${{env.AWS_R53_BASE_DOMAIN}}""   
+        echo "-----------------" >> $GITHUB_STEP_SUMMARY
+        echo "## URL" >> $GITHUB_STEP_SUMMARY
+        echo "- **https://${{ env.SERVICE_NAME }}.${{env.AWS_R53_SUB_DOMAIN}}${{env.AWS_ALB_NUMBER}}.${{env.AWS_R53_BASE_DOMAIN}}**" >> $GITHUB_STEP_SUMMARY
+
 
     - name: Agregar valores de API Gateway a SSM
       if: ${{ env.AWS_R53_SUB_DOMAIN == 'apis'}}
       run: |
         echo "Se obtiene APIKEY ID de los exports del stack"
-        APIKEY_ID=$(aws cloudformation --region ${{ env.AWS_DEPLOY_REGION }} describe-stacks --stack-name ${{ env.SERVICE_NAME }}-api \
+        APIKEY_ID=$(aws cloudformation --region ${{ env.AWS_DEPLOY_REGION }} describe-stacks --stack-name api-${{ env.SERVICE_NAME }} \
         --query 'Stacks[0].Outputs[?OutputKey==`ApiKey`].OutputValue' --output text)
 
         echo "Se obtiene el valor de la API Key"
@@ -252,5 +260,5 @@ jobs:
 
                   
         echo "Se agrega API Key y endpoint en SSM"
-        aws ssm put-parameter --name /${{ env.AWS_ECS_CLUSTER }}/${{ env.SERVICE_NAME }}-api --value \
+        aws ssm put-parameter --name /${{ env.AWS_ECS_CLUSTER }}/api-${{ env.SERVICE_NAME }} --value \
         "$SSM_CONTENT" --overwrite --type SecureString --region ${{ env.AWS_DEPLOY_REGION }}
